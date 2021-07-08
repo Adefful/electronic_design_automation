@@ -1,5 +1,5 @@
 #include "euler_method.hpp"
-#include <math.h>
+
 
 using namespace std;
 

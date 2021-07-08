@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 /*
 *
 * Author: Zadorozhnyi Pavel
