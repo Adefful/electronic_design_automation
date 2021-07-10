@@ -18,16 +18,17 @@ void newton_method() {
         auto f = [&](double u_){
             return ((E - u_)/R - I0*(exp(u_/pht) - 1.)) / (-1./R - I0*exp(u_/pht)/pht);
         };
+        
         double d = 0;
-        double a = 1, r = 0.01;
+        double a = 1, r = 0.1;
         double u1_ = 0;
-        for(int i =0; i < 10; i++) {
-            if (abs(d) > r) a = r/d;
-            else a = 1;
+        for(int i =0; i < 1000; i++) {
+            //if (abs(d) > r) a = r/d;
+            //else a = 1;
             d = f(u);
             double u1_ = u - a*d;
             cout <<i << ' ' << u1_ << '\n';
-            //if (abs(u1_-u) < 0.0001) break;
+            if (abs(u1_-u) < 0.0001) break;
             u = u1_;
         }
     }

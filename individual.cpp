@@ -20,9 +20,10 @@ double  EPS     =  0.001,
         R2      = 5000,     // om
         C       = 1e-12,    // F
         E_max   = 5.;       // v
-int n   = 50;
+int n   = 200;
 double finish_time = 3e-6;
 double h = finish_time / n;
+double h_const =  finish_time / n;
 
 double E(double t) {
     if (t < 1e-6 || t > 2.2e-6) return 0;
@@ -135,7 +136,7 @@ int main()
             vector<vector<double>> A = A_implicit(u);
             //cout << '\t' <<  iter << ' ' << u.back()[0] << endl; 
             vector<double> f = f_implicit(u,t);
-            double r = 0.01, a1 = 1, a2 = 1;
+             double r = 0.1, a1 = 1, a2 = 1;
             // if (abs(x[0]) > r &&  abs(x[1]) > r)  {
             //     a1 = r/ x[0];
             //     a2 = r/ x[1];
@@ -154,27 +155,32 @@ int main()
            
         }
         while(abs(u.back()[0] - u_prev[0]) > EPS && abs(u.back()[1] - u_prev[1]) > EPS);
-        // vector<vector<double>> A = A_implicit(u);
-        // do {
-        //     iter++;
-        //     double u0 = u.back()[0];
-        //     double u1 = u.back()[1];
-        //     double u0_prev = u[u.size() - 2][0];
-        //     double u1_prev = u[u.size() - 2][1];
+        vector<vector<double>> A = A_implicit(u);
+        do {
+            iter++;
+            double u0 = u.back()[0];
+            double u1 = u.back()[1];
+            double u0_prev = u[u.size() - 2][0];
+            double u1_prev = u[u.size() - 2][1];
             
-        //     //cout << '\t' <<  iter << ' ' << u.back()[0] << endl; 
-        //     vector<double> f = f_implicit(u,t);
+            //cout << '\t' <<  iter << ' ' << u.back()[0] << endl; 
+            vector<double> f = f_implicit(u,t);
             
-        //     vector<double> x = iteration(A,f);
-        //     //cout << '\t' << iter << '\t' << x[0] << '\t' << x[1] << endl;
-        //     u_prev[0] = u.back()[0];
-        //     u_prev[1] = u.back()[1];
-        //     u.back()[0]  += x[0];
-        //     u.back()[1]  += x[1];
-        // }
-        // while(abs(u.back()[0] - u_prev[0]) > EPS && abs(u.back()[1] - u_prev[1]) > EPS);
-
-        cout << t  << "," <<  u.back()[0]  << "," << u.back()[1]  << endl;
+            vector<double> x = iteration(A,f);
+            //cout << '\t' << iter << '\t' << x[0] << '\t' << x[1] << endl;
+            u_prev[0] = u.back()[0];
+            u_prev[1] = u.back()[1];
+            u.back()[0]  += x[0];
+            u.back()[1]  += x[1];
+        }
+        while(abs(u.back()[0] - u_prev[0]) > EPS && abs(u.back()[1] - u_prev[1]) > EPS);
+        double e1 = 0, e2 = 0;
+        if ((int)u.size() - 3 >= 0) {
+            e1 =  max((-0.5*(u.back()[0] - 2*u[(int)u.size() - 2][0] + u[(int)u.size() - 3][0] )), (-0.5*(u.back()[1] - 2*u[u.size() - 2][1] + u[u.size() - 3][1]) ));
+        }
+         if (EPS < e1) h = 2*h;
+         else h = h_const;
+        cout << t  << "," <<  u.back()[0]  << "," << u.back()[1] << ","  << iter << endl;
     }
     
     return 0;
